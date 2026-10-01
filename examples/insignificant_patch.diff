@@ -1,0 +1,6 @@
+--- src/kernel/sparse_matvec.py
++++ src/kernel/sparse_matvec.py
+@@ -10,3 +10,4 @@
+     y = [0.0] * num_rows
++    # Insignificant comment tweak
+     n_entries = len(data)

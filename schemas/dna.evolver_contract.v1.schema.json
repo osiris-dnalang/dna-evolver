@@ -1,0 +1,318 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.dna-lang.org/v1/evolver_contract.json",
+  "title": "DNAEvolverContractV1",
+  "description": "Typed contract defining mutation boundaries, hermetic evaluation criteria, provenance requirements, and execution authority for AI-generated code evolution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_kind",
+    "contract_id",
+    "contract_version",
+    "seed",
+    "scope",
+    "mutation",
+    "evaluator",
+    "correctness",
+    "performance",
+    "authority",
+    "evidence"
+  ],
+  "properties": {
+    "artifact_kind": {
+      "type": "string",
+      "const": "dna.evolver_contract/v1"
+    },
+    "contract_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_\\-\\.]+$"
+    },
+    "contract_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "seed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository_id", "commit", "source_tree_sha256"],
+      "properties": {
+        "repository_id": { "type": "string" },
+        "commit": { "type": "string" },
+        "source_tree_sha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mutable_paths",
+        "immutable_paths",
+        "max_files_changed",
+        "max_patch_bytes",
+        "max_ast_nodes_changed"
+      ],
+      "properties": {
+        "mutable_paths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "immutable_paths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "max_files_changed": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "max_patch_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "max_ast_nodes_changed": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        }
+      }
+    },
+    "mutation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "language",
+        "allowed_symbols",
+        "prohibited_capabilities"
+      ],
+      "properties": {
+        "language": {
+          "type": "string",
+          "enum": ["python", "rust", "cpp"]
+        },
+        "allowed_symbols": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "allowed_operators": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "prohibited_capabilities": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      }
+    },
+    "evaluator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image_digest",
+        "source_commit",
+        "reference_tests_tree_sha256",
+        "benchmark_input_manifest_sha256",
+        "network",
+        "filesystem",
+        "resources"
+      ],
+      "properties": {
+        "image_digest": { "type": "string" },
+        "source_commit": { "type": "string" },
+        "reference_tests_tree_sha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "benchmark_input_manifest_sha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "network": {
+          "type": "string",
+          "enum": ["DENY"]
+        },
+        "filesystem": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "workdir", "output"],
+          "properties": {
+            "source": { "type": "string", "enum": ["READ_ONLY"] },
+            "workdir": { "type": "string", "enum": ["EPHEMERAL"] },
+            "output": { "type": "string", "enum": ["BOUNDED"] }
+          }
+        },
+        "resources": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["timeout_seconds", "max_memory_mb", "max_cpu_seconds"],
+          "properties": {
+            "timeout_seconds": { "type": "number", "minimum": 1 },
+            "max_memory_mb": { "type": "integer", "minimum": 64 },
+            "max_cpu_seconds": { "type": "number", "minimum": 1 }
+          }
+        }
+      }
+    },
+    "correctness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["argv", "expected_exit_code"],
+      "properties": {
+        "argv": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "expected_exit_code": {
+          "type": "integer",
+          "const": 0
+        },
+        "timeout_seconds": {
+          "type": "number",
+          "minimum": 1,
+          "default": 120
+        }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "argv",
+        "baseline_artifact_sha256",
+        "warmup_runs",
+        "measured_runs",
+        "metric",
+        "objective",
+        "retain_if"
+      ],
+      "properties": {
+        "argv": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "baseline_artifact_sha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "warmup_runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "measured_runs": {
+          "type": "integer",
+          "minimum": 5
+        },
+        "metric": { "type": "string" },
+        "objective": {
+          "type": "string",
+          "enum": ["MINIMIZE", "MAXIMIZE"]
+        },
+        "retain_if": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "minimum_improvement_percent",
+            "confidence_interval",
+            "maximum_p99_regression_percent",
+            "maximum_memory_regression_percent"
+          ],
+          "properties": {
+            "minimum_improvement_percent": {
+              "type": "number",
+              "minimum": 0.1
+            },
+            "confidence_interval": {
+              "type": "string",
+              "enum": ["paired_bootstrap_95", "paired_bootstrap_99"]
+            },
+            "maximum_p99_regression_percent": {
+              "type": "number"
+            },
+            "maximum_memory_regression_percent": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_status",
+        "sandbox_execution",
+        "source_merge",
+        "deployment",
+        "customer_claim_allowed"
+      ],
+      "properties": {
+        "candidate_status": {
+          "type": "string",
+          "const": "PROPOSAL_ONLY"
+        },
+        "sandbox_execution": {
+          "type": "string",
+          "enum": ["REQUIRES_OCCR_GRANT", "SANDBOX_EVALUATION_ONLY"]
+        },
+        "source_merge": {
+          "type": "string",
+          "const": "HUMAN_APPROVAL_REQUIRED"
+        },
+        "deployment": {
+          "type": "string",
+          "const": "BLOCKED"
+        },
+        "customer_claim_allowed": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonicalization",
+        "digest_algorithm",
+        "require"
+      ],
+      "properties": {
+        "canonicalization": {
+          "type": "string",
+          "const": "OSIRIS-CANONICAL-JSON-V1"
+        },
+        "digest_algorithm": {
+          "type": "string",
+          "const": "SHA-256"
+        },
+        "require": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      }
+    },
+    "policy_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "occr_policy_bundle_sha256": { "type": "string" },
+        "policy_version": { "type": "string" },
+        "allowed_execution_substrate": { "type": "string" },
+        "release_decision": {
+          "type": "string",
+          "enum": ["HOLD", "DENY"]
+        }
+      }
+    }
+  }
+}

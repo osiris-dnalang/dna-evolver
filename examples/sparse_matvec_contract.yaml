@@ -1,0 +1,119 @@
+artifact_kind: dna.evolver_contract/v1
+contract_id: sparse_matvec_latency_v1
+contract_version: 1.0.0
+
+seed:
+  repository_id: sparse-kernel-bench
+  commit: "20261001-seed-c0"
+  source_tree_sha256: "sha256:a2202e3b3247f006ca0cdca9aaead7291d5702c1c93cd2df7104a94ba3b3d1ac"
+
+scope:
+  mutable_paths:
+    - "src/kernel/**"
+  immutable_paths:
+    - "evaluator/**"
+    - "tests/reference/**"
+    - "benchmarks/frozen_inputs/**"
+    - "policy/**"
+    - ".github/**"
+    - "pyproject.toml"
+    - "uv.lock"
+    - "Dockerfile"
+  max_files_changed: 2
+  max_patch_bytes: 32768
+  max_ast_nodes_changed: 80
+
+mutation:
+  language: python
+  allowed_symbols:
+    - sparse_matvec
+  allowed_operators:
+    - reorder_independent_loop_v1
+    - substitute_registered_container_v1
+    - tune_numeric_parameter_v1
+  prohibited_capabilities:
+    - new_import
+    - dynamic_import
+    - filesystem_read
+    - filesystem_write_outside_workdir
+    - network_access
+    - subprocess_execution
+    - environment_variable_access
+    - reflection
+    - dependency_change
+    - test_change
+    - evaluator_change
+    - policy_change
+
+evaluator:
+  image_digest: "sha256:4f8a3b839818b2c453531b20fefbe60a37704cf0efd1297d025fa896c21e5124"
+  source_commit: "20261001-eval-v1"
+  reference_tests_tree_sha256: "sha256:dfd96e3163ae94dddb3af1a2ff3ebccc0158d43e784150951832f8e7e3ffe462"
+  benchmark_input_manifest_sha256: "sha256:307c46c23753af48fda26429268875e0e356fe307ffe39ead724999ded72468c"
+  network: DENY
+  filesystem:
+    source: READ_ONLY
+    workdir: EPHEMERAL
+    output: BOUNDED
+  resources:
+    timeout_seconds: 60.0
+    max_memory_mb: 512
+    max_cpu_seconds: 45.0
+
+correctness:
+  argv:
+    - "pytest"
+    - "tests/reference"
+  expected_exit_code: 0
+  timeout_seconds: 30.0
+
+performance:
+  argv:
+    - "python3"
+    - "benchmarks/bench_sparse_matvec.py"
+    - "--frozen-inputs"
+    - "benchmarks/frozen_inputs/matrix_1000x1000.json"
+    - "--warmup"
+    - "5"
+    - "--runs"
+    - "30"
+  baseline_artifact_sha256: "sha256:e4ccad04b4f6d0ef1b1d70af497659d7884e4acf61a3d0d88ee44929dc994ce4"
+  warmup_runs: 5
+  measured_runs: 30
+  metric: median_decode_latency_ms
+  objective: MINIMIZE
+  retain_if:
+    minimum_improvement_percent: 5.0
+    confidence_interval: paired_bootstrap_99
+    maximum_p99_regression_percent: 2.0
+    maximum_memory_regression_percent: 5.0
+
+authority:
+  candidate_status: PROPOSAL_ONLY
+  sandbox_execution: REQUIRES_OCCR_GRANT
+  source_merge: HUMAN_APPROVAL_REQUIRED
+  deployment: BLOCKED
+  customer_claim_allowed: false
+
+evidence:
+  canonicalization: OSIRIS-CANONICAL-JSON-V1
+  digest_algorithm: SHA-256
+  require:
+    - base_commit_hash
+    - source_tree_hash
+    - patch_hash
+    - ast_diff_hash
+    - evaluator_image_digest
+    - evaluator_log_hash
+    - test_output_hash
+    - benchmark_raw_samples_hash
+    - environment_manifest_hash
+    - authorization_receipt_hash
+    - completion_receipt_hash
+    - lineage_parent_hash
+
+policy_binding:
+  occr_policy_bundle_sha256: "sha256:88390b1e3ca63319808fc2a9a97f26772a0f8bf901c801f98bc195fecf0163ee"
+  policy_version: "dna-evolver-policy-v1"
+  allowed_execution_substrate: "LOCAL_HERMETIC_RUNNER"
+  release_decision: "HOLD"
