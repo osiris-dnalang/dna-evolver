@@ -1,0 +1,12 @@
+quarantine_record_id: "qr-crsm-propulsion-001"
+epistemic_status: "QUARANTINED_RESEARCH_SPECULATION"
+claim_ceiling: "THEORETICAL"
+authorities:
+  execution_authority: "NONE"
+  merge_authority: "BLOCKED"
+  deployment_authority: "BLOCKED"
+  customer_claim_allowed: false
+  ci_cd_inclusion: "EXCLUDED"
+policy_binding:
+  enforcing_gate: "OCCR_GOVERNANCE_GATE"
+  rule: "PROHIBIT_SPECULATIVE_PHYSICS_EXECUTION"

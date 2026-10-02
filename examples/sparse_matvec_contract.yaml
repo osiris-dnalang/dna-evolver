@@ -74,11 +74,11 @@ performance:
     - "--frozen-inputs"
     - "benchmarks/frozen_inputs/matrix_1000x1000.json"
     - "--warmup"
-    - "5"
+    - "15"
     - "--runs"
     - "30"
-  baseline_artifact_sha256: "sha256:e4ccad04b4f6d0ef1b1d70af497659d7884e4acf61a3d0d88ee44929dc994ce4"
-  warmup_runs: 5
+  baseline_artifact_sha256: "sha256:8c74e1597b9ef6c22c3037a1c2e21a2d4d4695239f9582de856ced271b29d116"
+  warmup_runs: 15
   measured_runs: 30
   metric: median_decode_latency_ms
   objective: MINIMIZE

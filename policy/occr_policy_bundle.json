@@ -1,0 +1,38 @@
+{
+  "policy_bundle_id": "occr-core-governance-v1",
+  "version": "1.0.0",
+  "description": "OCCR Core Governance Policy Bundle enforcing capability boundaries, candidate firewalls, and backend truthfulness.",
+  "roles": {
+    "ROLE_AI_PROPOSER": {
+      "allowed_actions": ["PROPOSE_CANDIDATE", "REQUEST_SANDBOX_EVALUATION"],
+      "denied_actions": ["MERGE_CODE", "DEPLOY_PRODUCTION", "ALTER_POLICY", "ACCESS_CREDENTIALS", "ACCESS_NETWORK"]
+    },
+    "ROLE_HUMAN_REVIEWER": {
+      "allowed_actions": ["REVIEW_CANDIDATE", "APPROVE_MERGE", "REJECT_CANDIDATE"],
+      "denied_actions": ["BYPASS_CORRECTNESS_TESTS", "PROMOTE_SIMULATION_TO_HARDWARE"]
+    },
+    "ROLE_SYSTEM_RELEASE_MANAGER": {
+      "allowed_actions": ["DEPLOY_VERIFIED_RELEASE"],
+      "denied_actions": ["BYPASS_OCCR_RECEIPT"]
+    }
+  },
+  "authority_ceiling": {
+    "AI_GENERATED_CANDIDATE": {
+      "execution_authority": "SANDBOX_EVALUATION_ONLY",
+      "merge_authority": "HUMAN_APPROVAL_REQUIRED",
+      "deployment_authority": "BLOCKED",
+      "customer_claim_allowed": false
+    }
+  },
+  "claim_rules": {
+    "mock_claim_ceiling": "THEORETICAL",
+    "simulator_claim_ceiling": "SIMULATION_VERIFIED",
+    "hardware_claim_ceiling": "HARDWARE_OBSERVED"
+  },
+  "sandbox_constraints": {
+    "network": "DENY",
+    "max_timeout_seconds": 120.0,
+    "max_memory_mb": 1024,
+    "max_patch_bytes": 65536
+  }
+}

@@ -1,0 +1,117 @@
+artifact_kind: dna.evolver_contract/v1
+contract_id: qldpc_minsum_latency_v1
+contract_version: 1.0.0
+
+seed:
+  repository_id: qldpc-syndrome-decoder
+  commit: "20261001-seed-qldpc-c0"
+  source_tree_sha256: "sha256:867cd19271318b3c0295663825232f3b713b37f32b9958d8f5b677ff72469ed5"
+
+scope:
+  mutable_paths:
+    - "src/kernel/**"
+  immutable_paths:
+    - "evaluator/**"
+    - "tests/reference/**"
+    - "benchmarks/frozen_inputs/**"
+    - "policy/**"
+    - ".github/**"
+    - "pyproject.toml"
+  max_files_changed: 2
+  max_patch_bytes: 32768
+  max_ast_nodes_changed: 120
+
+mutation:
+  language: python
+  allowed_symbols:
+    - minsum_decode
+  allowed_operators:
+    - vectorize_check_node_minsum_v1
+    - precompute_bipartite_edges_v1
+    - early_syndrome_termination_v1
+  prohibited_capabilities:
+    - new_import
+    - dynamic_import
+    - filesystem_read
+    - filesystem_write_outside_workdir
+    - network_access
+    - subprocess_execution
+    - environment_variable_access
+    - reflection
+    - dependency_change
+    - test_change
+    - evaluator_change
+    - policy_change
+
+evaluator:
+  image_digest: "sha256:4f8a3b839818b2c453531b20fefbe60a37704cf0efd1297d025fa896c21e5124"
+  source_commit: "20261001-eval-qldpc-v1"
+  reference_tests_tree_sha256: "sha256:8d84db4326990aa20c07e47a53d3979e9483c16e087f02b30bf53ab6803c1d03"
+  benchmark_input_manifest_sha256: "sha256:ac07eae763cd12907f60000be7d54eebd8d0d99074e793ecf6f9bb5c43dd06ed"
+  network: DENY
+  filesystem:
+    source: READ_ONLY
+    workdir: EPHEMERAL
+    output: BOUNDED
+  resources:
+    timeout_seconds: 60.0
+    max_memory_mb: 512
+    max_cpu_seconds: 45.0
+
+correctness:
+  argv:
+    - "pytest"
+    - "tests/reference"
+  expected_exit_code: 0
+  timeout_seconds: 30.0
+
+performance:
+  argv:
+    - "python3"
+    - "benchmarks/bench_decoder.py"
+    - "--frozen-inputs"
+    - "benchmarks/frozen_inputs/qldpc_syndromes_n72.json"
+    - "--warmup"
+    - "2"
+    - "--runs"
+    - "20"
+  baseline_artifact_sha256: "sha256:5b767d483e81d512718e8b49f24eec831a8bd90cc1fd39dce87e30f4980d1f79"
+  warmup_runs: 2
+  measured_runs: 20
+  metric: median_syndrome_decode_us
+  objective: MINIMIZE
+  retain_if:
+    minimum_improvement_percent: 5.0
+    confidence_interval: paired_bootstrap_99
+    maximum_p99_regression_percent: 2.0
+    maximum_memory_regression_percent: 5.0
+
+authority:
+  candidate_status: PROPOSAL_ONLY
+  sandbox_execution: REQUIRES_OCCR_GRANT
+  source_merge: HUMAN_APPROVAL_REQUIRED
+  deployment: BLOCKED
+  customer_claim_allowed: false
+
+evidence:
+  canonicalization: OSIRIS-CANONICAL-JSON-V1
+  digest_algorithm: SHA-256
+  require:
+    - base_commit_hash
+    - source_tree_hash
+    - patch_hash
+    - ast_diff_hash
+    - evaluator_image_digest
+    - evaluator_log_hash
+    - test_output_hash
+    - benchmark_raw_samples_hash
+    - environment_manifest_hash
+    - authorization_receipt_hash
+    - completion_receipt_hash
+    - lineage_parent_hash
+
+policy_binding:
+  occr_policy_bundle_sha256: "sha256:88390b1e3ca63319808fc2a9a97f26772a0f8bf901c801f98bc195fecf0163ee"
+  policy_version: "qldpc-evolver-policy-v1"
+  allowed_execution_substrate: "LOCAL_HERMETIC_RUNNER"
+  release_decision: "HOLD"

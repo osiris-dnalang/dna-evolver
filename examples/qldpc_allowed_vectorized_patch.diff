@@ -1,0 +1,119 @@
+--- src/kernel/minsum_decoder.py
++++ src/kernel/minsum_decoder.py
+@@ -12,34 +12,23 @@
+ ) -> Tuple[List[int], bool, int]:
+     """Decode a binary error syndrome on a quantum LDPC check matrix.
+     
+-    Args:
+-        syndrome: Syndrome vector s of length m (checks).
+-        H_dense: Binary parity check matrix H of shape (m, n).
+-        max_iter: Maximum message-passing iterations.
+-        alpha: Min-Sum normalization scaling factor (default 0.75).
+-        prior_llr: Log-likelihood ratio for channel error probability.
+-        
+-    Returns:
+-        (estimated_error, converged, iterations_used)
++    Optimized implementation: uses O(d) first/second minimum tracking
++    and direct array indexing instead of O(d^2) dictionary scans.
+     """
+     H = np.asarray(H_dense, dtype=np.uint8)
+     s = np.asarray(syndrome, dtype=np.uint8)
+     m, n = H.shape
+ 
+-    # Pre-extract neighbor indices for each check and variable
+     check_nbrs = [np.nonzero(H[c, :])[0] for c in range(m)]
+     var_nbrs = [np.nonzero(H[:, v])[0] for v in range(n)]
+ 
+-    # Initial variable-to-check messages: prior LLR
+-    # Message dictionaries / matrices:
+-    # q[v, c]: message from variable v to check c
+-    # r[c, v]: message from check c to variable v
+-    q = {}
+-    r = {}
++    # Flat message matrices (m, n) for vectorized lookups
++    q = np.zeros((m, n), dtype=np.float64)
++    r = np.zeros((m, n), dtype=np.float64)
++
+     for v in range(n):
+         for c in var_nbrs[v]:
+-            q[(v, c)] = prior_llr
+-            r[(c, v)] = 0.0
++            q[c, v] = prior_llr
+ 
+     converged = False
+     iterations_used = 0
+@@ -47,35 +36,44 @@
+     for it in range(1, max_iter + 1):
+         iterations_used = it
+ 
+-        # 1. Check node update (Min-Sum)
++        # 1. Optimized Check node update: O(d) two-minimums algorithm
+         for c in range(m):
+             v_list = check_nbrs[c]
+             deg = len(v_list)
+-            for v in v_list:
+-                # Neighbors of c excluding v
+-                other_vars = [v_other for v_other in v_list if v_other != v]
+-                
+-                # Sign product with syndrome sign (-1)^s[c]
+-                sign_prod = -1.0 if s[c] == 1 else 1.0
+-                min_mag = 1e9
++            if deg == 0:
++                continue
+ 
+-                for v_other in other_vars:
+-                    val = q[(v_other, c)]
+-                    if val < 0:
+-                        sign_prod *= -1.0
+-                    mag = abs(val)
+-                    if mag < min_mag:
+-                        min_mag = mag
++            vals = [q[c, v] for v in v_list]
++            sign_prod = -1.0 if s[c] == 1 else 1.0
++            
++            # Find min1 and min2
++            min1_val, min2_val = 1e9, 1e9
++            min1_idx = -1
+ 
+-                r[(c, v)] = alpha * sign_prod * min_mag
++            for idx, val in enumerate(vals):
++                if val < 0:
++                    sign_prod *= -1.0
++                mag = abs(val)
++                if mag < min1_val:
++                    min2_val = min1_val
++                    min1_val = mag
++                    min1_idx = idx
++                elif mag < min2_val:
++                    min2_val = mag
++
++            for idx, v in enumerate(v_list):
++                val = vals[idx]
++                v_sign = -1.0 if val < 0 else 1.0
++                c_sign = sign_prod * v_sign
++                min_mag = min2_val if idx == min1_idx else min1_val
++                r[c, v] = alpha * c_sign * min_mag
+ 
+         # 2. Variable node update and hard decision
+         L_total = np.full(n, prior_llr, dtype=np.float64)
+         for v in range(n):
+             for c in var_nbrs[v]:
+-                L_total[v] += r[(c, v)]
++                L_total[v] += r[c, v]
+ 
+-        # Hard decision
+         e_hat = np.zeros(n, dtype=np.uint8)
+         e_hat[L_total < 0] = 1
+ 
+@@ -85,9 +83,9 @@
+             converged = True
+             break
+ 
+-        # 4. Update variable-to-check messages for next iteration
++        # 4. Update variable-to-check messages
+         for v in range(n):
+             for c in var_nbrs[v]:
+-                q[(v, c)] = L_total[v] - r[(c, v)]
++                q[c, v] = L_total[v] - r[c, v]
+ 
+     return e_hat.tolist(), bool(converged), iterations_used

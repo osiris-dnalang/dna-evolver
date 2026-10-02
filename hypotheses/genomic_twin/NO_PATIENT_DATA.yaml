@@ -1,0 +1,13 @@
+quarantine_record_id: "qr-genomic-twin-002"
+epistemic_status: "QUARANTINED_THEORETICAL_MODEL"
+claim_ceiling: "THEORETICAL"
+authorities:
+  execution_authority: "NONE"
+  merge_authority: "BLOCKED"
+  deployment_authority: "BLOCKED"
+  customer_claim_allowed: false
+  phi_ingestion_allowed: false
+  clinical_decision_support: "STRICTLY_PROHIBITED"
+compliance:
+  hipaa_applicability: "NO_PHI_PERMITTED"
+  gdpr_article_9: "SPECIAL_CATEGORY_DATA_BLOCKED"

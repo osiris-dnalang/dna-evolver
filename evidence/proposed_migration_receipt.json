@@ -1,0 +1,92 @@
+{
+  "approval": {
+    "decision": "APPROVED_BY_HUMAN_OPERATOR",
+    "human_signer": "enki",
+    "required": true,
+    "signature": "approved_by_user_gate_turn_20261002_073720",
+    "signed_at_utc": "2026-10-02T07:37:20Z"
+  },
+  "canonicalization": "RFC 8785",
+  "created_at_utc": "2026-10-02T06:42:00Z",
+  "governing_rule": "Inspect -> Verify -> Produce proposed remediation -> Human approve -> Apply reversible migration -> Re-verify -> Commit -> Human approve -> Tag/push",
+  "migration_id": "mig-20261002-ledger-forensic-001",
+  "observed_facts": {
+    "blocks": [
+      {
+        "canonical_hash": "5d0f58056ca11bcf4c2cd09f82d853039b521d9198bcce5a8907f31262eb3d2e",
+        "canonical_payload_sha256": "892426ac09f557db35e4b2617015e639a52c8e591dd2cf9d7ce20730c889fa05",
+        "kind": "NCLM1_PREREGISTRATION",
+        "observed_hash": "5d0f58056ca11bcf4c2cd09f82d853039b521d9198bcce5a8907f31262eb3d2e",
+        "predecessor": "0000000000000000000000000000000000000000000000000000000000000000",
+        "sequence_index": 0,
+        "signature_status": "unsigned_system_record",
+        "status": "VALID",
+        "timestamp": "2026-10-01T09:51:14Z",
+        "writer_identity": "osiris.campaign.preregistration"
+      },
+      {
+        "canonical_hash": "b71b58f217889e6422e80db4d085506f23238787147c3d5a848bf7e8cf5fe253",
+        "canonical_payload_sha256": "469e6d9ca12815a5769a5a3d976f8c03122384ceefac7c4362eeea3616dcb8aa",
+        "kind": "NCLM1_SWEEP_STAGE1_COMPLETE",
+        "observed_hash": "b71b58f217889e6422e80db4d085506f23238787147c3d5a848bf7e8cf5fe253",
+        "predecessor": "5d0f58056ca11bcf4c2cd09f82d853039b521d9198bcce5a8907f31262eb3d2e",
+        "sequence_index": 1,
+        "signature_status": "unsigned_system_record",
+        "status": "VALID",
+        "timestamp": "2026-10-01T10:39:26Z",
+        "writer_identity": "osiris.sweep.stage1_complete"
+      },
+      {
+        "canonical_hash": "40d7c436a91dddfa348622068f507c34a8816f819334e838d7c6baff4c8097b3",
+        "canonical_payload_sha256": "2329f57fde6db4382848c53c133cb64e761806d6eb333de38dc1cc5b620d2f41",
+        "kind": "ZENODO_DRAFT_DEPOSITED",
+        "observed_hash": "966a0cf6ca85bc9465189e86d877645460bb2466e4aabf541bbd7d59ee60f6e5",
+        "predecessor": "b71b58f217889e6422e80db4d085506f23238787147c3d5a848bf7e8cf5fe253",
+        "root_cause": "Serialization used Python default separators (\", \", \": \") and hash was computed over all dict keys rather than sha256(prev + canonical_body)",
+        "sequence_index": 2,
+        "signature_status": "unsigned_external_record",
+        "status": "FAIL_HASH_MISMATCH",
+        "timestamp": "2026-10-01T11:08:52Z",
+        "writer_identity": "external.zenodo_draft_deposit_script"
+      }
+    ]
+  },
+  "proposed_remediation": {
+    "original_records_preserved": true,
+    "proposed_supersession_entry": {
+      "kind": "LEDGER_SUPERSEDED_CORRECTION",
+      "payload": {
+        "action": "RECORD_SUPERSEDED",
+        "corrected_canonical_hash": "40d7c436a91dddfa348622068f507c34a8816f819334e838d7c6baff4c8097b3",
+        "migration_receipt_id": "mig-20261002-ledger-forensic-001",
+        "reason": "Canonicalization and hash input mismatch during Zenodo draft deposit",
+        "resolution_policy": "supersede_and_attest",
+        "superseded_block_index": 2,
+        "superseded_observed_hash": "966a0cf6ca85bc9465189e86d877645460bb2466e4aabf541bbd7d59ee60f6e5"
+      },
+      "prev": "966a0cf6ca85bc9465189e86d877645460bb2466e4aabf541bbd7d59ee60f6e5",
+      "ts": "2026-10-02T07:37:20Z"
+    },
+    "rationale": "In accordance with forensic immutability, existing blocks 0..2 are untouched. Remediation appends an explicit supersession entry linking observed hash to rederived canonical hash.",
+    "rewrites_existing_blocks": false,
+    "rollback_plan": {
+      "command": "truncate -s 1983 /home/enki/.osiris/genome_ledger.jsonl",
+      "method": "truncate_to_original_byte_count",
+      "original_byte_count": 1983,
+      "original_head_hash": "966a0cf6ca85bc9465189e86d877645460bb2466e4aabf541bbd7d59ee60f6e5",
+      "original_sha256": "0ca7c8052bde8067bda45b223fff5d7e45fb85c083013ca2b89c35a88cd139a2"
+    },
+    "strategy": "append_only_supersession"
+  },
+  "receipt_type": "MIGRATION_RECEIPT",
+  "receipt_version": "1.0",
+  "source_ledger": {
+    "failure_message": "entry 2: hash mismatch",
+    "first_failure_index": 2,
+    "head_before_migration": "966a0cf6ca85bc9465189e86d877645460bb2466e4aabf541bbd7d59ee60f6e5",
+    "path": "/home/enki/.osiris/genome_ledger.jsonl",
+    "total_entries": 3,
+    "validation_status": "BROKEN"
+  },
+  "status": "signed_and_applied"
+}

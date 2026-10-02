@@ -1,0 +1,11 @@
+quarantine_record_id: "qr-vesta-transport-003"
+epistemic_status: "QUARANTINED_ORBITAL_MODEL"
+claim_ceiling: "THEORETICAL"
+authorities:
+  build_authority: "BLOCKED"
+  flight_test_authority: "BLOCKED"
+  operational_execution: "BLOCKED"
+  customer_claim_allowed: false
+policy_binding:
+  enforcing_gate: "OCCR_GOVERNANCE_GATE"
+  rule: "PROHIBIT_UNVERIFIED_AEROSPACE_CLAIMS"

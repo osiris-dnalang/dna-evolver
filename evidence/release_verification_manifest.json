@@ -1,0 +1,104 @@
+{
+  "manifest_schema": "OSIRIS-RELEASE-VERIFICATION-V1",
+  "created_at": "2026-10-02T07:41:00-04:00",
+  "repository": {
+    "base_commit": "5eb116836984ac05823a7bccaa9e3467c6311053",
+    "git_diff_sha256": "sha256:10808a4b068f30c250714b6e115505cb0e6148a72636a923c5a6bdaf1cead2aa",
+    "state": "RELEASE_APPROVED_AND_AUTHORIZED",
+    "governing_rule": "Inspect -> Verify -> Produce proposed remediation -> Human approve -> Apply reversible migration -> Re-verify -> Commit -> Human approve -> Tag/push",
+    "human_approval": {
+      "gate": "GATE_2_TAG_AND_RELEASE",
+      "approved_by": "enki",
+      "timestamp": "2026-10-02T08:22:08-04:00",
+      "verdict": "APPROVED"
+    },
+    "push_authorized": true,
+    "tag_authorized": true,
+    "tag_target": "v4.2.1",
+    "master_branch_mutation": "AUTHORIZED_COMMIT_PRESENT"
+  },
+  "test_suite": {
+    "total_tests": 63,
+    "passed": 63,
+    "failed": 0,
+    "skipped": 0,
+    "junit_xml_path": "evidence/junit_test_report.xml",
+    "junit_xml_sha256": "sha256:9f9f8736b4834641e8d5ff6ccd39e38f0003b58d461b18247e9b19e0d54afc6b"
+  },
+  "environment": {
+    "python_version": "3.12.3",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "hardware_substrate": "Node Beta (PC / Intel Core Ultra / WSL2)",
+    "qiskit_version": "2.3.1",
+    "numpy_version": "2.4.4",
+    "pytest_version": "9.0.2"
+  },
+  "dependency_lockfiles": {
+    "uv_lock_sha256": "sha256:5085dffe445d4fcc426dc9eee24e427324248f0fb70f611ff2ea724f87b9ee14",
+    "pyproject_toml_sha256": "sha256:17b9a42f39ea89f1c1b32c3d28baad52442838aedb32dcbddf3912eeea395bb3"
+  },
+  "governance_evidence": {
+    "proposed_migration_receipt_path": "evidence/proposed_migration_receipt.json",
+    "proposed_migration_receipt_canonical_sha256": "sha256:5383206b771e19b081dadb6e4e5ed190462b8215cf6896161623dbdec9308139",
+    "proposed_migration_receipt_file_sha256": "sha256:9a643689650bc7bad8f56512435848f172d991d89147022dd2b00e012d20b8b1",
+    "occr_policy_bundle_sha256": "sha256:78f2dd5d93e6b2a92055d1c21c16803bb7035d26db5af654047462a764801f68",
+    "quarantine_isolation_verified": true,
+    "ledger_migration_applied": true,
+    "post_migration_ledger_head": "102140262b00fd2ea2b7c5b20695a43c94ac94076f320c28ac01e7f5a90b0008",
+    "post_migration_ledger_sha256": "sha256:04c37506e145357b0d0672b3127873868b42e11cdc5ec4a7179409fd1a533f85"
+  },
+  "benchmarks": {
+    "qldpc_decoder_contract_sha256": "sha256:92f06ff7f0e164ce2830b46a695a1dcf58de3aa2ac07634f67bbc8aecfcf10e4",
+    "qldpc_baseline_sha256": "sha256:5b767d483e81d512718e8b49f24eec831a8bd90cc1fd39dce87e30f4980d1f79",
+    "sparse_matvec_contract_sha256": "sha256:1c23feb6dffed8be3697ce357bbebfe6aa167dfc6754340db0e7caf2ad32b98d",
+    "sparse_matvec_baseline_sha256": "sha256:8c74e1597b9ef6c22c3037a1c2e21a2d4d4695239f9582de856ced271b29d116"
+  },
+  "rqc_protocol": {
+    "protocol_version": "OSIRIS-RQC-THREE-ARM-MATCHED-V1",
+    "active_backend_discovery": "DYNAMIC_RESOLVER_RUNTIME",
+    "fail_closed_enforced": true,
+    "matched_arms": [
+      "Arm 1: RQC Informative Feedback",
+      "Arm 2: Placebo/Sham Feedback",
+      "Arm 3: Static RCS"
+    ]
+  },
+  "security_and_license_audit": {
+    "secret_scan_findings_count": 0,
+    "secrets_detected": false,
+    "provider_credentials_exposed": false,
+    "scan_timestamp": "2026-10-02T03:14:20-04:00"
+  },
+  "inventory_file_hashes": {
+    "OSIRIS_v4.2.1_GOVERNED_ARCHITECTURE.md": "sha256:3190b07ef39269203661780272448bcf121f70f91fd7058b842457d7f01e941e",
+    "src/agent_adapter.py": "sha256:31028837b0f9ada0e81eb7c70bc11c3da0cc7e714306b5244a9fc021fa15d794",
+    "src/backend_discovery.py": "sha256:a196dc741e3864b8ea1d8b0728f6b106d56672919bd10fceda5bf34ad003c6f4",
+    "src/backend_truth.py": "sha256:245a19b53dcfe41030af22178d83e480d20afaa747d4b5ea2a45d9190c9dddf4",
+    "src/canonical.py": "sha256:bd857cc56a98c508c656800b7f00762f984d1a674b9ad3ec7160a22bc080a57c",
+    "src/cli.py": "sha256:2061b657ba0748e5b1dfba4ce6c824cd3d5a16678c5cb88c9b6b95bf9ba312dd",
+    "src/occr_gate.py": "sha256:21c923025c25bdb7869fdf2b26b468555c58a8b12839df85ecfdd2d2857d0246",
+    "src/program_database.py": "sha256:fa1c41577474ed031542c6c80d05da7b544ea3b30993cc61058f7ecfdfdf8d37",
+    "src/rqc_matched_protocol.py": "sha256:14ee15c42d9f90746ebca242048557d381f96efd59bc6bc0f396826a8faf9d78",
+    "policy/occr_policy_bundle.json": "sha256:78f2dd5d93e6b2a92055d1c21c16803bb7035d26db5af654047462a764801f68",
+    "examples/qldpc_decoder_contract.yaml": "sha256:92f06ff7f0e164ce2830b46a695a1dcf58de3aa2ac07634f67bbc8aecfcf10e4",
+    "examples/qldpc_allowed_vectorized_patch.diff": "sha256:e95ae5292870d98c5aed7b54b1049d7363cd0b6beabd888c43e06efc02058ae8",
+    "examples/qldpc_decoder/src/kernel/minsum_decoder.py": "sha256:867cd19271318b3c0295663825232f3b713b37f32b9958d8f5b677ff72469ed5",
+    "examples/qldpc_decoder/tests/reference/test_decoder.py": "sha256:8d84db4326990aa20c07e47a53d3979e9483c16e087f02b30bf53ab6803c1d03",
+    "examples/qldpc_decoder/benchmarks/bench_decoder.py": "sha256:626d5dd3379b43d024d67fa4a5bff955388e84e480a4f7fc543a23ebc44b13ee",
+    "examples/qldpc_decoder/benchmarks/frozen_inputs/qldpc_syndromes_n72.json": "sha256:ac07eae763cd12907f60000be7d54eebd8d0d99074e793ecf6f9bb5c43dd06ed",
+    "examples/qldpc_decoder/benchmarks/frozen_inputs/baseline_artifact.json": "sha256:5b767d483e81d512718e8b49f24eec831a8bd90cc1fd39dce87e30f4980d1f79",
+    "examples/sparse_matvec_contract.yaml": "sha256:1c23feb6dffed8be3697ce357bbebfe6aa167dfc6754340db0e7caf2ad32b98d",
+    "examples/sparse_matvec/benchmarks/frozen_inputs/baseline_artifact.json": "sha256:8c74e1597b9ef6c22c3037a1c2e21a2d4d4695239f9582de856ced271b29d116",
+    "tests/test_agent_adapter.py": "sha256:2da649b037fc6690226b4ff1845fddd65904ec8fd2f1e0351bd01f5b7456a70c",
+    "tests/test_backend_discovery.py": "sha256:cd46796e96fdb51ee322fd60bfa9b47206fb41ba39ea897c008dda5841c904c2",
+    "tests/test_backend_truth.py": "sha256:7ef5624c0df3c1f8f6e35ba17fff299364ba813ec10b6163305c9ef1e60a32a9",
+    "tests/test_occr_gate.py": "sha256:ecc5089f84793a1f576b5ec7b611bd726198642d2ff3ad88de9163f3e0360255",
+    "tests/test_program_database.py": "sha256:73caebdad5cdac792b38b8332febec706f41ed61c31a2b066bcfa2534b656cb9",
+    "tests/test_qldpc_candidate.py": "sha256:58a5c676351c9ddb3bb498ba63c6bc1e9bc7024abc41fabfc5c8767f2849ca36",
+    "tests/test_quarantine_isolation.py": "sha256:11eb521c55467e2077bf2062eab9f7e21954dad88a5d40abcdbf0e134dc41a33",
+    "tests/test_rqc_matched_protocol.py": "sha256:edb65fb779ca52ee043b2440c5dc77a8e2124028072ac9bebe7e4b4986e3ba27",
+    "evidence/proposed_migration_receipt.json": "sha256:9a643689650bc7bad8f56512435848f172d991d89147022dd2b00e012d20b8b1",
+    "evidence/junit_test_report.xml": "sha256:9f9f8736b4834641e8d5ff6ccd39e38f0003b58d461b18247e9b19e0d54afc6b"
+  }
+}

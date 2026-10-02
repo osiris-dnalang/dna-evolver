@@ -12,7 +12,12 @@ from src.run_hermetic_evaluator import run_hermetic_evaluation
 from src.emit_evidence_receipt import emit_evidence_receipt
 
 
-def run_pipeline(contract_path: str, patch_path: Optional[str], repo_root: str) -> dict:
+def run_pipeline(
+    contract_path: str,
+    patch_path: Optional[str] = None,
+    repo_root: str = ".",
+    patch_str: Optional[str] = None
+) -> dict:
     """Execute the full end-to-end DNA-Lang evolution pipeline on a candidate patch."""
     # 1. Load and validate contract
     contract = load_contract(contract_path)
@@ -23,8 +28,7 @@ def run_pipeline(contract_path: str, patch_path: Optional[str], repo_root: str) 
             "errors": errors
         }
 
-    patch_str = None
-    if patch_path and os.path.exists(patch_path):
+    if patch_str is None and patch_path and os.path.exists(patch_path):
         with open(patch_path, "r", encoding="utf-8") as f:
             patch_str = f.read()
 
@@ -48,15 +52,26 @@ def run_pipeline(contract_path: str, patch_path: Optional[str], repo_root: str) 
         scope_res = {"allowed": True, "reason_code": "NO_PATCH_PROVIDED"}
 
     # 3. AST firewall
-    orig_kernel_path = os.path.join(repo_root, "src/kernel/sparse_matvec.py")
-    if patch_str and os.path.exists(orig_kernel_path):
-        with open(orig_kernel_path, "r", encoding="utf-8") as f:
-            orig_code = f.read()
-        try:
-            cand_code = apply_unified_diff(orig_code, patch_str)
-            ast_res = validate_ast(orig_code, cand_code, contract)
-        except Exception as e:
-            ast_res = {"allowed": False, "reason_code": "PATCH_APPLICATION_ERROR", "message": str(e)}
+    ast_res = {"allowed": True, "reason_code": "AST_VALID", "details": {}}
+    if patch_str and scope_res.get("allowed"):
+        touched_files = scope_res.get("details", {}).get("touched_files", [])
+        for rel_path in touched_files:
+            if rel_path.endswith(".py"):
+                full_path = os.path.join(repo_root, rel_path)
+                if os.path.exists(full_path):
+                    with open(full_path, "r", encoding="utf-8") as f:
+                        orig_code = f.read()
+                    try:
+                        cand_code = apply_unified_diff(orig_code, patch_str)
+                        file_ast_res = validate_ast(orig_code, cand_code, contract)
+                    except Exception as e:
+                        file_ast_res = {"allowed": False, "reason_code": "PATCH_APPLICATION_ERROR", "message": str(e)}
+
+                    if not file_ast_res["allowed"]:
+                        ast_res = file_ast_res
+                        break
+                    else:
+                        ast_res = file_ast_res
 
         if not ast_res["allowed"]:
             receipt = emit_evidence_receipt(
