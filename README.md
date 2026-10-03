@@ -99,7 +99,8 @@ dna-evolver/
 │   └── test_demo_four_outcomes.py             # The 4 foundational outcomes E2E
 ├── THREAT_MODEL.md                            # Comprehensive security and attack vector model
 ├── LIMITATIONS.md                             # Boundaries, scope discipline, and non-claims
-└── README.md                                  # Package documentation
+├── README.md                                  # Package documentation
+└── LICENSE                                    # Apache License 2.0
 ```
 
 ---
@@ -139,3 +140,9 @@ DNA-Lang integrates as a **portable contract and governance layer** alongside Go
 | **Artifact Registry** | Stores versioned, frozen evaluator container images and input digests |
 | **Cloud Storage** | Long-term evidence artifact store and audit retention target |
 | **BigQuery** | Searchable evidence, fitness telemetry, and lineage analytics |
+
+---
+
+## License
+
+Apache License 2.0 -- see [LICENSE](LICENSE). Copyright 2026 Devin Phillip Davis.
