@@ -75,7 +75,7 @@ performance:
     - "2"
     - "--runs"
     - "20"
-  baseline_artifact_sha256: "sha256:5b767d483e81d512718e8b49f24eec831a8bd90cc1fd39dce87e30f4980d1f79"
+  baseline_artifact_sha256: "sha256:01b6297b3cd6c52a09ce85dd80fd607a6cbbc1a786bc82b9b872c2715299e48e"
   warmup_runs: 2
   measured_runs: 20
   metric: median_syndrome_decode_us

@@ -77,7 +77,7 @@ performance:
     - "15"
     - "--runs"
     - "30"
-  baseline_artifact_sha256: "sha256:8c74e1597b9ef6c22c3037a1c2e21a2d4d4695239f9582de856ced271b29d116"
+  baseline_artifact_sha256: "sha256:ba6c91da353a91a25d276ad72f85aaa2cae508e1136b02b667cefbf6653ec6d3"
   warmup_runs: 15
   measured_runs: 30
   metric: median_decode_latency_ms

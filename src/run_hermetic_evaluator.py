@@ -98,9 +98,15 @@ def run_hermetic_evaluation(
 
         # 4. Correctness evaluation
         corr_argv = correctness_cfg.get("argv", ["pytest", "tests/reference"])
+        corr_cmd = list(corr_argv)
+        if corr_cmd and corr_cmd[0] == "pytest":
+            corr_cmd = [sys.executable, "-m", "pytest"] + corr_cmd[1:]
+        elif corr_cmd and corr_cmd[0] in ("python", "python3"):
+            corr_cmd = [sys.executable] + corr_cmd[1:]
+
         try:
             corr_proc = subprocess.run(
-                corr_argv,
+                corr_cmd,
                 cwd=tmpdir,
                 shell=False,
                 capture_output=True,
@@ -149,9 +155,15 @@ def run_hermetic_evaluation(
                 "details": {}
             }
 
+        perf_cmd = list(perf_argv)
+        if perf_cmd and perf_cmd[0] in ("python", "python3"):
+            perf_cmd = [sys.executable] + perf_cmd[1:]
+        elif perf_cmd and perf_cmd[0] == "pytest":
+            perf_cmd = [sys.executable, "-m", "pytest"] + perf_cmd[1:]
+
         try:
             perf_proc = subprocess.run(
-                perf_argv,
+                perf_cmd,
                 cwd=tmpdir,
                 shell=False,
                 capture_output=True,
